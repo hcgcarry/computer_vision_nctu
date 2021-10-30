@@ -30,10 +30,11 @@ python3 inference.py --dataset --dataset {the path to 2021VRDL_HW1_datasets}
 
 To reproduct my submission without training, do the following steps:
 
-1. download  2021VRDL_HW1_datasets
-1. trained model 
-2. python3 inference.py  --dataset {the path to 2021VRDL_HW1_datasets}
-3. answer.txt will be generated in the current folder
+1. Download  2021VRDL_HW1_datasets
+1. Download trained model 
+https://drive.google.com/file/d/1UTjlkMlnK3w9KHSt7zKH3Up28OKN34xy/view?usp=sharing 
+3. python3 inference.py  --dataset {the path to 2021VRDL_HW1_datasets}
+4. answer.txt will be generated in the current folder
 
 
 ### detail
