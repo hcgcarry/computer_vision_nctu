@@ -1,11 +1,12 @@
 import os
 import sys
 import time
+import json
 
-_, term_width = os.popen('stty size', 'r').read().split()
+_, term_width = os.popen("stty size", "r").read().split()
 term_width = int(term_width)
 
-TOTAL_BAR_LENGTH = 50.
+TOTAL_BAR_LENGTH = 50.0
 last_time = time.time()
 begin_time = last_time
 
@@ -18,13 +19,13 @@ def progress_bar(current, total, msg=None):
     cur_len = int(TOTAL_BAR_LENGTH * current / total)
     rest_len = int(TOTAL_BAR_LENGTH - cur_len) - 1
 
-    sys.stdout.write(' [')
+    sys.stdout.write(" [")
     for i in range(cur_len):
-        sys.stdout.write('=')
-    sys.stdout.write('>')
+        sys.stdout.write("=")
+    sys.stdout.write(">")
     for i in range(rest_len):
-        sys.stdout.write('.')
-    sys.stdout.write(']')
+        sys.stdout.write(".")
+    sys.stdout.write("]")
 
     cur_time = time.time()
     step_time = cur_time - last_time
@@ -32,25 +33,25 @@ def progress_bar(current, total, msg=None):
     tot_time = cur_time - begin_time
 
     L = []
-    L.append('  Step: %s' % format_time(step_time))
-    L.append(' | Tot: %s' % format_time(tot_time))
+    L.append("  Step: %s" % format_time(step_time))
+    L.append(" | Tot: %s" % format_time(tot_time))
     if msg:
-        L.append(' | ' + msg)
+        L.append(" | " + msg)
 
-    msg = ''.join(L)
+    msg = "".join(L)
     sys.stdout.write(msg)
     for i in range(term_width - int(TOTAL_BAR_LENGTH) - len(msg) - 3):
-        sys.stdout.write(' ')
+        sys.stdout.write(" ")
 
     # Go back to the center of the bar.
     for i in range(term_width - int(TOTAL_BAR_LENGTH / 2) + 2):
-        sys.stdout.write('\b')
-    sys.stdout.write(' %d/%d ' % (current + 1, total))
+        sys.stdout.write("\b")
+    sys.stdout.write(" %d/%d " % (current + 1, total))
 
     if current < total - 1:
-        sys.stdout.write('\r')
+        sys.stdout.write("\r")
     else:
-        sys.stdout.write('\n')
+        sys.stdout.write("\n")
     sys.stdout.flush()
 
 
@@ -65,29 +66,29 @@ def format_time(seconds):
     seconds = seconds - secondsf
     millis = int(seconds * 1000)
 
-    f = ''
+    f = ""
     i = 1
     if days > 0:
-        f += str(days) + 'D'
+        f += str(days) + "D"
         i += 1
     if hours > 0 and i <= 2:
-        f += str(hours) + 'h'
+        f += str(hours) + "h"
         i += 1
     if minutes > 0 and i <= 2:
-        f += str(minutes) + 'm'
+        f += str(minutes) + "m"
         i += 1
     if secondsf > 0 and i <= 2:
-        f += str(secondsf) + 's'
+        f += str(secondsf) + "s"
         i += 1
     if millis > 0 and i <= 2:
-        f += str(millis).zfill(3) + 'ms'
+        f += str(millis).zfill(3) + "ms"
         i += 1
-    if f == '':
-        f = '0ms'
+    if f == "":
+        f = "0ms"
     return f
 
-import json
-class Params():
+
+class Params:
     """Class that loads hyperparameters from a json file.
     Example:
     ```
@@ -103,9 +104,9 @@ class Params():
             self.__dict__.update(params)
 
     def save(self, json_path):
-        with open(json_path, 'w') as f:
+        with open(json_path, "w") as f:
             json.dump(self.__dict__, f, indent=4)
-            
+
     def update(self, json_path):
         """Loads parameters from json file"""
         with open(json_path) as f:
@@ -114,5 +115,8 @@ class Params():
 
     @property
     def dict(self):
-        """Gives dict-like access to Params instance by `params.dict['learning_rate']"""
+        """Gives dict-like access to Params instance
+        by `params.dict['learning_rate']
+        """
+
         return self.__dict__

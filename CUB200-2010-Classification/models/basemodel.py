@@ -6,37 +6,47 @@ from torch.autograd import Variable
 
 from torchinfo import summary
 
-######################################################################
+
 def weights_init_kaiming(m):
+    """
+    used to init weight of layers
+    """
     classname = m.__class__.__name__
     # print(classname)
-    if classname.find('Conv') != -1:
-        init.kaiming_normal_(m.weight.data, a=0, mode='fan_in') # For old pytorch, you may use kaiming_normal.
-    elif classname.find('Linear') != -1:
-        init.kaiming_normal_(m.weight.data, a=0, mode='fan_out')
+    if classname.find("Conv") != -1:
+        init.kaiming_normal_(
+            m.weight.data, a=0, mode="fan_in"
+        )  # For old pytorch, you may use kaiming_normal.
+    elif classname.find("Linear") != -1:
+        init.kaiming_normal_(m.weight.data, a=0, mode="fan_out")
         init.constant_(m.bias.data, 0.0)
-    elif classname.find('BatchNorm1d') != -1:
+    elif classname.find("BatchNorm1d") != -1:
         init.normal_(m.weight.data, 1.0, 0.02)
         init.constant_(m.bias.data, 0.0)
 
+
 def weights_init_classifier(m):
     classname = m.__class__.__name__
-    if classname.find('Linear') != -1:
+    if classname.find("Linear") != -1:
         init.normal_(m.weight.data, std=0.001)
         init.constant_(m.bias.data, 0.0)
 
+
 # Define the ResNet50-based Model
-class resnet50(nn.Module):
+class Resnet50(nn.Module):
+    """
+    basically, it is resnet50, but return value with latent
+    """
 
     def __init__(self, num_classes, droprate=0.5, stride=2):
-        super(resnet50, self).__init__()
+        super(Resnet50, self).__init__()
 
         model_ft = models.resnet50(pretrained=True)
         # avg pooling to global pooling
         if stride == 1:
-            model_ft.layer4[0].downsample[0].stride = (1,1)
-            model_ft.layer4[0].conv2.stride = (1,1)
-        model_ft.avgpool = nn.AdaptiveAvgPool2d((1,1))
+            model_ft.layer4[0].downsample[0].stride = (1, 1)
+            model_ft.layer4[0].conv2.stride = (1, 1)
+        model_ft.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.model = model_ft
 
         # extract global feature
@@ -49,9 +59,7 @@ class resnet50(nn.Module):
         self.bnneck.apply(weights_init_kaiming)
 
         # global classifier
-        self.last_layer = nn.Sequential(
-            nn.Linear(512, num_classes)
-        )
+        self.last_layer = nn.Sequential(nn.Linear(512, num_classes))
         self.last_layer.apply(weights_init_classifier)
 
     def forward(self, x):
@@ -65,19 +73,22 @@ class resnet50(nn.Module):
         x = self.model.layer4(feat_maps)
         x = self.model.avgpool(x)
         x = torch.flatten(x, 1)
-        global_feat = self.feature_layer(x) # for triple loss
+        global_feat = self.feature_layer(x)  # for triple loss
         feat = self.bnneck(global_feat)
-        out = self.last_layer(feat) # for ID loss
+        out = self.last_layer(feat)  # for ID loss
 
         return out, global_feat
 
-'''
+
+"""
 # debug model structure
 # Run this code with:
 python model.py
-'''
-if __name__ == '__main__':
-    net = resnet50(num_classes=200, )
+"""
+if __name__ == "__main__":
+    net = Resnet50(
+        num_classes=200,
+    )
 
     summary(net.cuda(), (1, 3, 256, 256))
-    net.to('cpu')
+    net.to("cpu")

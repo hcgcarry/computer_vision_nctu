@@ -33,6 +33,7 @@ To reproduct my submission without training, do the following steps:
 1. Download  2021VRDL_HW1_datasets
 1. Download trained model 
 https://drive.google.com/file/d/1UTjlkMlnK3w9KHSt7zKH3Up28OKN34xy/view?usp=sharing 
+and put this under ./experiments/baseline/resnet50/weights
 3. python3 inference.py  --dataset {the path to 2021VRDL_HW1_datasets}
 4. answer.txt will be generated in the current folder
 
