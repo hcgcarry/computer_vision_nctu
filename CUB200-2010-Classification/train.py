@@ -134,7 +134,18 @@ class Trainer(object):
         current_iter = iteration + epoch * num_iter
         max_iter = total_epoch * num_iter
 
-        lr = ( init_lr * ( 1 + cos( pi * (current_iter - warmup_iter) / (max_iter - warmup_iter))) / 2)
+        lr = (
+            init_lr
+            * (
+                1
+                + cos(
+                    pi
+                    * (current_iter - warmup_iter)
+                    / (max_iter - warmup_iter)
+                )
+            )
+            / 2
+        )
 
         if epoch < warmup_epoch:
             lr = init_lr * current_iter / warmup_iter
